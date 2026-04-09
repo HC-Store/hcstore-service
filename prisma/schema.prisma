@@ -93,16 +93,31 @@ model produto {
   descricao    String
   preco        Decimal   @db.Decimal(10, 2)
   estoque      Int
-  imagem       String?   // 👈 ADICIONADO (opcional)
+
+  marca        String?
+  tamanho      String?
+
+  imagens      produtoImagem[]  // 👈 relação
+
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+
   categoriaId  Int
 
   itemcarrinho itemcarrinho[]
   itempedido   itempedido[]
-  categoria    categoria @relation(fields: [categoriaId], references: [id], map: "Produto_categoriaId_fkey")
 
-  @@index([categoriaId], map: "Produto_categoriaId_fkey")
+  categoria    categoria @relation(fields: [categoriaId], references: [id])
+}
+
+model produtoImagem {
+  id        Int     @id @default(autoincrement())
+  url       String
+  produtoId Int
+
+  produto   produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+
+  @@index([produtoId])
 }
 
 model usuario {
@@ -115,6 +130,8 @@ model usuario {
   telefone       String
   sexo           String
   dataNascimento DateTime
+
+  ativo          Boolean  @default(true) // 👈 AQUI
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
