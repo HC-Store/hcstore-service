@@ -4,9 +4,13 @@ import {
   buscarCarrinho
 } from "../controllers/carrinho.controller.js";
 
+// 🔒 importa o middleware
+import { authMiddleware } from "../middlewares/authMiddleware.js";
+
 const router = Router();
 
-router.post("/", criarCarrinho);
-router.get("/:usuarioId", buscarCarrinho);
+// 🔒 proteger rotas
+router.post("/", authMiddleware, criarCarrinho);
+router.get("/", authMiddleware, buscarCarrinho);
 
 export default router;

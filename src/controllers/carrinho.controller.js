@@ -2,33 +2,42 @@ import { prisma } from "../prisma/client.js";
 
 // ✅ CRIAR CARRINHO
 export const criarCarrinho = async (req, res) => {
-  const { usuarioId } = req.body;
+  try {
+    const usuarioId = req.user.id // 🔥 vem do token
 
-  const carrinho = await prisma.carrinho.create({
-    data: {
-      usuarioId
-    }
-  });
+    const carrinho = await prisma.carrinho.create({
+      data: {
+        usuarioId
+      }
+    });
 
-  res.json(carrinho);
+    return res.json(carrinho);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
 };
+
 
 // ✅ BUSCAR CARRINHO DO USUÁRIO
 export const buscarCarrinho = async (req, res) => {
-  const { usuarioId } = req.params;
+  try {
+    const usuarioId = req.user.id // 🔥 vem do token
 
-  const carrinho = await prisma.carrinho.findUnique({
-    where: {
-      usuarioId: Number(usuarioId)
-    },
-    include: {
-      itemcarrinho: {
-        include: {
-          produto: true
+    const carrinho = await prisma.carrinho.findUnique({
+      where: {
+        usuarioId
+      },
+      include: {
+        itemcarrinho: {
+          include: {
+            produto: true
+          }
         }
       }
-    }
-  });
+    });
 
-  res.json(carrinho);
+    return res.json(carrinho);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
 };

@@ -6,13 +6,14 @@ import {
   removerItem,
   limparCarrinho
 } from "../controllers/itemcarrinho.controller.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = Router();
 
-router.post("/", adicionarItem);
-router.get("/:carrinhoId", listarItens);
-router.patch("/:id", atualizarItem);
-router.delete("/:id", removerItem);
-router.delete("/limpar/:carrinhoId", limparCarrinho);
+router.post("/", authMiddleware, adicionarItem);
+router.get("/", authMiddleware, listarItens);
+router.patch("/:id", authMiddleware, atualizarItem);
+router.delete("/:id", authMiddleware, removerItem);
+router.delete("/limpar", authMiddleware, limparCarrinho);
 
 export default router;
