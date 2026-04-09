@@ -1,1 +1,0 @@
-# hcstore-service
