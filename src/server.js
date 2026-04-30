@@ -9,10 +9,8 @@ import carrinhoRoutes from "./routes/carrinho.routes.js";
 import itemCarrinhoRoutes from "./routes/itemcarrinho.routes.js";
 import pedidoRoutes from "./routes/pedido.routes.js";
 import authRoutes from "./routes/authRoutes.js"
-<<<<<<< HEAD
 import produtoImagemRoutes from "./routes/produtoImagem.routes.js";
-=======
->>>>>>> 20a41d8cbec901779cd33f66c1299dd7445aa4da
+
 
 const app = express()
 
@@ -26,10 +24,9 @@ app.use("/api/carrinho", carrinhoRoutes);
 app.use("/api/itemcarrinho", itemCarrinhoRoutes);
 app.use("/api/pedidos", pedidoRoutes);
 app.use("/api/auth", authRoutes)
-<<<<<<< HEAD
+
 app.use("/api/produto-imagem", produtoImagemRoutes);
-=======
->>>>>>> 20a41d8cbec901779cd33f66c1299dd7445aa4da
+
 
 app.get('/', (req, res) => {
   res.send('API rodando 🔥')
