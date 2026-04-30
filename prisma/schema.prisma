@@ -8,10 +8,18 @@ datasource db {
 }
 
 model carrinho {
+<<<<<<< HEAD
   id           Int            @id @default(autoincrement())
   usuarioId    Int            @unique(map: "Carrinho_usuarioId_key")
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+=======
+  id        Int      @id @default(autoincrement())
+  usuarioId Int      @unique(map: "Carrinho_usuarioId_key")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+>>>>>>> 20a41d8cbec901779cd33f66c1299dd7445aa4da
   usuario      usuario        @relation(fields: [usuarioId], references: [id], map: "Carrinho_usuarioId_fkey")
   itemcarrinho itemcarrinho[]
 }
@@ -20,6 +28,10 @@ model categoria {
   id        Int       @id @default(autoincrement())
   nome      String
   updatedAt DateTime  @updatedAt
+<<<<<<< HEAD
+=======
+
+>>>>>>> 20a41d8cbec901779cd33f66c1299dd7445aa4da
   produto   produto[]
 }
 
@@ -32,6 +44,10 @@ model endereco {
   cep       String
   usuarioId Int
   updatedAt DateTime @updatedAt
+<<<<<<< HEAD
+=======
+
+>>>>>>> 20a41d8cbec901779cd33f66c1299dd7445aa4da
   usuario   usuario  @relation(fields: [usuarioId], references: [id], map: "Endereco_usuarioId_fkey")
   pedido    pedido[]
 
@@ -44,6 +60,10 @@ model itemcarrinho {
   produtoId  Int
   quantidade Int
   updatedAt  DateTime @updatedAt
+<<<<<<< HEAD
+=======
+
+>>>>>>> 20a41d8cbec901779cd33f66c1299dd7445aa4da
   carrinho   carrinho @relation(fields: [carrinhoId], references: [id], map: "ItemCarrinho_carrinhoId_fkey")
   produto    produto  @relation(fields: [produtoId], references: [id], map: "ItemCarrinho_produtoId_fkey")
 
@@ -52,6 +72,7 @@ model itemcarrinho {
 }
 
 model itempedido {
+<<<<<<< HEAD
   id         Int      @id @default(autoincrement())
   pedidoId   Int
   produtoId  Int
@@ -60,6 +81,17 @@ model itempedido {
   updatedAt  DateTime @updatedAt
   pedido     pedido   @relation(fields: [pedidoId], references: [id], map: "ItemPedido_pedidoId_fkey")
   produto    produto  @relation(fields: [produtoId], references: [id], map: "ItemPedido_produtoId_fkey")
+=======
+  id         Int     @id @default(autoincrement())
+  pedidoId   Int
+  produtoId  Int
+  quantidade Int
+  preco      Decimal @db.Decimal(10, 2)
+  updatedAt  DateTime @updatedAt
+
+  pedido     pedido  @relation(fields: [pedidoId], references: [id], map: "ItemPedido_pedidoId_fkey")
+  produto    produto @relation(fields: [produtoId], references: [id], map: "ItemPedido_produtoId_fkey")
+>>>>>>> 20a41d8cbec901779cd33f66c1299dd7445aa4da
 
   @@index([pedidoId], map: "ItemPedido_pedidoId_fkey")
   @@index([produtoId], map: "ItemPedido_produtoId_fkey")
@@ -73,6 +105,10 @@ model pedido {
   total      Decimal       @db.Decimal(10, 2)
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
+<<<<<<< HEAD
+=======
+
+>>>>>>> 20a41d8cbec901779cd33f66c1299dd7445aa4da
   itempedido itempedido[]
   endereco   endereco      @relation(fields: [enderecoId], references: [id], map: "Pedido_enderecoId_fkey")
   usuario    usuario       @relation(fields: [usuarioId], references: [id], map: "Pedido_usuarioId_fkey")
@@ -82,6 +118,7 @@ model pedido {
 }
 
 model produto {
+<<<<<<< HEAD
   id           Int             @id @default(autoincrement())
   nome         String
   descricao    String
@@ -98,18 +135,45 @@ model produto {
   imagens      produtoImagem[]
 
   @@index([categoriaId], map: "produto_categoriaId_fkey")
+=======
+  id           Int       @id @default(autoincrement())
+  nome         String
+  descricao    String
+  preco        Decimal   @db.Decimal(10, 2)
+  estoque      Int
+
+  marca        String?
+  tamanho      String?
+
+  imagens      produtoImagem[]  // 👈 relação
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  categoriaId  Int
+
+  itemcarrinho itemcarrinho[]
+  itempedido   itempedido[]
+
+  categoria    categoria @relation(fields: [categoriaId], references: [id])
+>>>>>>> 20a41d8cbec901779cd33f66c1299dd7445aa4da
 }
 
 model produtoImagem {
   id        Int     @id @default(autoincrement())
   url       String
   produtoId Int
+<<<<<<< HEAD
+=======
+
+>>>>>>> 20a41d8cbec901779cd33f66c1299dd7445aa4da
   produto   produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
 
   @@index([produtoId])
 }
 
 model usuario {
+<<<<<<< HEAD
   id             Int        @id @default(autoincrement())
   nome           String
   sobrenome      String
@@ -122,6 +186,23 @@ model usuario {
   ativo          Boolean    @default(true)
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+=======
+  id             Int      @id @default(autoincrement())
+  nome           String
+  sobrenome      String
+  email          String   @unique(map: "Usuario_email_key")
+  senha          String
+  cpf            String   @unique(map: "Usuario_cpf_key")
+  telefone       String
+  sexo           String
+  dataNascimento DateTime
+
+  ativo          Boolean  @default(true) // 👈 AQUI
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+>>>>>>> 20a41d8cbec901779cd33f66c1299dd7445aa4da
   carrinho       carrinho?
   endereco       endereco[]
   pedido         pedido[]
@@ -133,4 +214,8 @@ enum pedido_status {
   ENVIADO
   ENTREGUE
   CANCELADO
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 20a41d8cbec901779cd33f66c1299dd7445aa4da
