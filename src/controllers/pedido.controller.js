@@ -58,6 +58,7 @@ export const criarPedido = async (req, res) => {
 export const listarPedidos = async (req, res) => {
   const pedidos = await prisma.pedido.findMany({
     include: {
+      usuario: true,  // ← adiciona isso
       itempedido: {
         include: {
           produto: true
@@ -91,13 +92,17 @@ export const buscarPedido = async (req, res) => {
 
 // ✅ ATUALIZAR STATUS
 export const atualizarPedido = async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
 
-  const pedido = await prisma.pedido.update({
-    where: { id: Number(id) },
-    data: { status }
-  });
+    const pedido = await prisma.pedido.update({
+      where: { id: Number(id) },
+      data: { status }
+    });
 
-  res.json(pedido);
+    res.json(pedido);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
 };

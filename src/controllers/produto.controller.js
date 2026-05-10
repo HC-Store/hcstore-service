@@ -2,7 +2,7 @@ import { prisma } from "../prisma/client.js";
 
 // ✅ CRIAR PRODUTO
 export const criarProduto = async (req, res) => {
-  const { nome, descricao, preco, estoque, categoriaId, imagem } = req.body;
+  const { nome, descricao, preco, estoque, categoriaId, marca, tamanho, imagem } = req.body;
 
   if (!categoriaId) {
     return res.status(400).json({ error: "categoriaId é obrigatório" });
@@ -23,7 +23,9 @@ export const criarProduto = async (req, res) => {
       preco: Number(preco),
       estoque: Number(estoque),
       categoriaId: Number(categoriaId),
-      imagem
+      marca,
+      tamanho,
+      imagem  // ← adiciona isso
     }
   });
 
@@ -49,7 +51,7 @@ export const buscarProduto = async (req, res) => {
   const produto = await prisma.produto.findUnique({
     where: { id: Number(id) },
     include: {
-      categoria: true
+      categoria: true,
     }
   });
 

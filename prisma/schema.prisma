@@ -132,6 +132,7 @@ model usuario {
   dataNascimento DateTime
 
   ativo          Boolean  @default(true) // 👈 AQUI
+  role           usuario_role @default(USER)
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -139,6 +140,11 @@ model usuario {
   carrinho       carrinho?
   endereco       endereco[]
   pedido         pedido[]
+}
+
+enum usuario_role {
+  USER
+  ADMIN
 }
 
 enum pedido_status {

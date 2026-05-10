@@ -8,7 +8,8 @@ import enderecoRoutes from "./routes/endereco.routes.js";
 import carrinhoRoutes from "./routes/carrinho.routes.js";
 import itemCarrinhoRoutes from "./routes/itemcarrinho.routes.js";
 import pedidoRoutes from "./routes/pedido.routes.js";
-import authRoutes from "./routes/authRoutes.js"
+import authRoutes from "./routes/authRoutes.js";
+import produtoImagemRoutes from "./routes/produtoImagem.routes.js"; // ← novo
 
 const app = express()
 
@@ -21,7 +22,8 @@ app.use("/api/enderecos", enderecoRoutes);
 app.use("/api/carrinho", carrinhoRoutes);
 app.use("/api/itemcarrinho", itemCarrinhoRoutes);
 app.use("/api/pedidos", pedidoRoutes);
-app.use("/api/auth", authRoutes)
+app.use("/api/auth", authRoutes);
+app.use("/api/produto-imagem", produtoImagemRoutes); // ← novo
 
 app.get('/', (req, res) => {
   res.send('API rodando 🔥')
