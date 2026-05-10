@@ -4,7 +4,7 @@ export const authMiddleware = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization
 
-    // ❌ sem token
+    // sem token
     if (!authHeader) {
       return res.status(401).json({ erro: "Token não fornecido" })
     }

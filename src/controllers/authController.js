@@ -1,8 +1,8 @@
 import { prisma } from "../prisma/client.js"
-import  bcrypt  from "bcrypt"
-import  jwt  from "jsonwebtoken"
+import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 
-// 📌 REGISTER (cadastro)
+// REGISTER
 export const register = async (req, res) => {
   try {
     const {
@@ -42,14 +42,14 @@ export const register = async (req, res) => {
       }
     })
 
-    // 🔥 criar carrinho automático
+    // criar carrinho automático
     await prisma.carrinho.create({
       data: {
         usuarioId: user.id
       }
     })
 
-    // remover senha da resposta
+    // remover senha
     const { senha: _, ...userSemSenha } = user
 
     return res.status(201).json(userSemSenha)
@@ -59,8 +59,7 @@ export const register = async (req, res) => {
   }
 }
 
-
-// 📌 LOGIN
+// LOGIN
 export const login = async (req, res) => {
   try {
     const { email, senha } = req.body
@@ -84,7 +83,7 @@ export const login = async (req, res) => {
     // gerar token
     const token = jwt.sign(
       { id: user.id },
-      "SEGREDO_SUPER_SECRETO", // ⚠️ depois jogar no .env
+      "SEGREDO_SUPER_SECRETO",
       { expiresIn: "1d" }
     )
 

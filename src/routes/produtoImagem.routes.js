@@ -1,11 +1,10 @@
-import express from 'express';
-import { criarImagem, listarImagens, deletarImagem } from '../controllers/produtoImagem.controller.js';
-import { authMiddleware } from '../middlewares/authMiddleware.js';
+import { Router } from "express";
+import { listarImagens, criarImagem, deletarImagem } from "../controllers/produtoImagem.controller.js";
 
-const router = express.Router();
+const router = Router();
 
-router.get('/', listarImagens);
-router.post('/', authMiddleware, criarImagem);
-router.delete('/:id', authMiddleware, deletarImagem);
+router.get("/", listarImagens);
+router.post("/", criarImagem);
+router.delete("/:id", deletarImagem);
 
 export default router;

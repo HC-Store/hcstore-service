@@ -9,7 +9,7 @@ import carrinhoRoutes from "./routes/carrinho.routes.js";
 import itemCarrinhoRoutes from "./routes/itemcarrinho.routes.js";
 import pedidoRoutes from "./routes/pedido.routes.js";
 import authRoutes from "./routes/authRoutes.js";
-import produtoImagemRoutes from "./routes/produtoImagem.routes.js"; // ← novo
+import produtoImagemRoutes from "./routes/produtoImagem.routes.js";
 
 const app = express()
 
@@ -23,7 +23,7 @@ app.use("/api/carrinho", carrinhoRoutes);
 app.use("/api/itemcarrinho", itemCarrinhoRoutes);
 app.use("/api/pedidos", pedidoRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/produto-imagem", produtoImagemRoutes); // ← novo
+app.use("/api/produto-imagem", produtoImagemRoutes);
 
 app.get('/', (req, res) => {
   res.send('API rodando 🔥')
