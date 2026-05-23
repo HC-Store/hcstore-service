@@ -5,24 +5,18 @@ import jwt from "jsonwebtoken"
 // REGISTER
 export const register = async (req, res) => {
   try {
-    const {
-      nome,
-      sobrenome,
-      email,
-      senha,
-      cpf,
-      telefone,
-      sexo,
-      dataNascimento
-    } = req.body
+    const { nome, sobrenome, email, senha, cpf, telefone, sexo, dataNascimento } = req.body
 
     // verificar email
-    const userExist = await prisma.usuario.findUnique({
-      where: { email }
-    })
+    const emailExiste = await prisma.usuario.findUnique({ where: { email } })
+    if (emailExiste) {
+      return res.status(400).json({ erro: "Este e-mail já está cadastrado." })
+    }
 
-    if (userExist) {
-      return res.status(400).json({ erro: "Email já cadastrado" })
+    // verificar cpf
+    const cpfExiste = await prisma.usuario.findUnique({ where: { cpf } })
+    if (cpfExiste) {
+      return res.status(400).json({ erro: "Este CPF já está cadastrado." })
     }
 
     // hash senha
@@ -43,19 +37,13 @@ export const register = async (req, res) => {
     })
 
     // criar carrinho automático
-    await prisma.carrinho.create({
-      data: {
-        usuarioId: user.id
-      }
-    })
+    await prisma.carrinho.create({ data: { usuarioId: user.id } })
 
-    // remover senha
     const { senha: _, ...userSemSenha } = user
-
     return res.status(201).json(userSemSenha)
 
   } catch (err) {
-    return res.status(500).json(err)
+    return res.status(500).json({ erro: "Erro interno. Tente novamente mais tarde." })
   }
 }
 
@@ -64,38 +52,33 @@ export const login = async (req, res) => {
   try {
     const { email, senha } = req.body
 
-    // buscar usuário
-    const user = await prisma.usuario.findUnique({
-      where: { email }
-    })
+    const user = await prisma.usuario.findUnique({ where: { email } })
 
     if (!user) {
-      return res.status(400).json({ erro: "Usuário não encontrado" })
+      return res.status(400).json({ erro: "E-mail não encontrado." })
     }
 
-    // verificar senha
     const senhaValida = await bcrypt.compare(senha, user.senha)
 
     if (!senhaValida) {
-      return res.status(400).json({ erro: "Senha inválida" })
+      return res.status(400).json({ erro: "Senha incorreta." })
     }
 
-    // gerar token
     const token = jwt.sign(
       { id: user.id },
       "SEGREDO_SUPER_SECRETO",
       { expiresIn: "1d" }
     )
 
-    // remover senha
     const { senha: _, ...userSemSenha } = user
 
     return res.json({
       user: userSemSenha,
-      token
+      token,
+      role: user.role
     })
 
   } catch (err) {
-    return res.status(500).json(err)
+    return res.status(500).json({ erro: "Erro interno. Tente novamente mais tarde." })
   }
 }
