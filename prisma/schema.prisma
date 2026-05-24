@@ -74,14 +74,23 @@ model pedido {
   id         Int           @id @default(autoincrement())
   usuarioId  Int
   enderecoId Int
-  status     pedido_status @default(PENDENTE)
-  total      Decimal       @db.Decimal(10, 2)
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+
+  status pedido_status @default(PENDENTE)
+
+  total      Decimal @db.Decimal(10, 2)
+  frete      Decimal? @db.Decimal(10, 2)
+  desconto   Decimal? @db.Decimal(10, 2)
+  totalFinal Decimal? @db.Decimal(10, 2)
+
+  tipoEntrega String?
+  cupomCodigo String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   itempedido itempedido[]
-  endereco   endereco     @relation(fields: [enderecoId], references: [id], map: "Pedido_enderecoId_fkey")
-  usuario    usuario      @relation(fields: [usuarioId], references: [id], map: "Pedido_usuarioId_fkey")
+  endereco   endereco @relation(fields: [enderecoId], references: [id], map: "Pedido_enderecoId_fkey")
+  usuario    usuario  @relation(fields: [usuarioId], references: [id], map: "Pedido_usuarioId_fkey")
 
   @@index([enderecoId], map: "Pedido_enderecoId_fkey")
   @@index([usuarioId], map: "Pedido_usuarioId_fkey")
@@ -154,4 +163,15 @@ enum pedido_status {
   ENVIADO
   ENTREGUE
   CANCELADO
+}
+model cupom {
+  id        Int      @id @default(autoincrement())
+  codigo    String   @unique
+  tipo      String   // PERCENTUAL ou FIXO
+  valor     Decimal  @db.Decimal(10, 2)
+  ativo     Boolean  @default(true)
+  usoMaximo Int?
+  usado     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
