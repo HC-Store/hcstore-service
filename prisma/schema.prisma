@@ -94,6 +94,10 @@ model produto {
   estoque      Int
   marca        String?
   tamanho      String?
+  composicaoMaterial   String? @db.Text
+  instrucaoLavagem     String? @db.Text
+  enviosDevolucoes     String? @db.Text
+  quantidadePorTamanho String? @db.Text
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
   categoriaId  Int
