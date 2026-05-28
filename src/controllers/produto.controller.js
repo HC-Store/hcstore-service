@@ -1,6 +1,5 @@
-import { prisma } from "../prisma/client.js";
+import { prisma } from '../prisma/client.js';
 
-// ✅ CRIAR PRODUTO
 export const criarProduto = async (req, res) => {
   try {
     const {
@@ -11,17 +10,19 @@ export const criarProduto = async (req, res) => {
       categoriaId,
       marca,
       tamanho,
-      imagem
+      imagens,
+      composicaoMaterial,
+      instrucaoLavagem,
+      enviosDevolucoes,
+      quantidadePorTamanho
     } = req.body;
 
-    // ✅ valida categoria
-    if (!categoriaId) {
+    if (!nome || !preco || !estoque || !categoriaId) {
       return res.status(400).json({
-        error: "categoriaId é obrigatório"
+        error: 'Nome, preço, estoque e categoria são obrigatórios.'
       });
     }
 
-    // ✅ verifica se categoria existe
     const categoriaExiste = await prisma.categoria.findUnique({
       where: {
         id: Number(categoriaId)
@@ -30,11 +31,14 @@ export const criarProduto = async (req, res) => {
 
     if (!categoriaExiste) {
       return res.status(400).json({
-        error: "Categoria não existe"
+        error: 'Categoria não existe.'
       });
     }
 
-    // ✅ cria produto
+    const imagensValidas = Array.isArray(imagens)
+      ? imagens.filter(Boolean).slice(0, 3)
+      : [];
+
     const produto = await prisma.produto.create({
       data: {
         nome,
@@ -44,54 +48,57 @@ export const criarProduto = async (req, res) => {
         categoriaId: Number(categoriaId),
         marca,
         tamanho,
+        composicaoMaterial,
+        instrucaoLavagem,
+        enviosDevolucoes,
+        quantidadePorTamanho: quantidadePorTamanho
+          ? JSON.stringify(quantidadePorTamanho)
+          : null,
 
-        // ✅ salva imagem na tabela produtoImagem
-        imagens: imagem
+        imagens: imagensValidas.length
           ? {
-              create: [
-                {
-                  url: imagem
-                }
-              ]
+              create: imagensValidas.map((url) => ({ url }))
             }
           : undefined
       },
-
       include: {
         categoria: true,
         imagens: true
       }
     });
 
-    res.status(201).json(produto);
-
+    return res.status(201).json(produto);
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
-    res.status(500).json(error);
+    return res.status(500).json({
+      error: 'Erro ao criar produto.'
+    });
   }
 };
 
-// ✅ LISTAR PRODUTOS
 export const listarProdutos = async (req, res) => {
   try {
     const produtos = await prisma.produto.findMany({
       include: {
         categoria: true,
         imagens: true
+      },
+      orderBy: {
+        createdAt: 'desc'
       }
     });
 
-    res.json(produtos);
-
+    return res.json(produtos);
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
-    res.status(500).json(error);
+    return res.status(500).json({
+      error: 'Erro ao listar produtos.'
+    });
   }
 };
 
-// ✅ BUSCAR PRODUTO POR ID
 export const buscarProduto = async (req, res) => {
   try {
     const { id } = req.params;
@@ -100,7 +107,6 @@ export const buscarProduto = async (req, res) => {
       where: {
         id: Number(id)
       },
-
       include: {
         categoria: true,
         imagens: true
@@ -109,20 +115,20 @@ export const buscarProduto = async (req, res) => {
 
     if (!produto) {
       return res.status(404).json({
-        error: "Produto não encontrado"
+        error: 'Produto não encontrado.'
       });
     }
 
-    res.json(produto);
-
+    return res.json(produto);
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
-    res.status(500).json(error);
+    return res.status(500).json({
+      error: 'Erro ao buscar produto.'
+    });
   }
 };
 
-// ✅ ATUALIZAR PRODUTO
 export const atualizarProduto = async (req, res) => {
   try {
     const { id } = req.params;
@@ -135,52 +141,59 @@ export const atualizarProduto = async (req, res) => {
       categoriaId,
       marca,
       tamanho,
-      imagem
+      imagens,
+      composicaoMaterial,
+      instrucaoLavagem,
+      enviosDevolucoes,
+      quantidadePorTamanho
     } = req.body;
+
+    const imagensValidas = Array.isArray(imagens)
+      ? imagens.filter(Boolean).slice(0, 3)
+      : [];
 
     const produto = await prisma.produto.update({
       where: {
         id: Number(id)
       },
-
       data: {
         nome,
         descricao,
-        preco: preco ? Number(preco) : undefined,
-        estoque: estoque ? Number(estoque) : undefined,
-        categoriaId: categoriaId
-          ? Number(categoriaId)
-          : undefined,
+        preco: preco !== undefined ? Number(preco) : undefined,
+        estoque: estoque !== undefined ? Number(estoque) : undefined,
+        categoriaId: categoriaId ? Number(categoriaId) : undefined,
         marca,
         tamanho,
+        composicaoMaterial,
+        instrucaoLavagem,
+        enviosDevolucoes,
+        quantidadePorTamanho: quantidadePorTamanho
+          ? JSON.stringify(quantidadePorTamanho)
+          : undefined,
 
-        imagens: imagem
+        imagens: imagensValidas.length
           ? {
-              create: [
-                {
-                  url: imagem
-                }
-              ]
+              deleteMany: {},
+              create: imagensValidas.map((url) => ({ url }))
             }
           : undefined
       },
-
       include: {
         categoria: true,
         imagens: true
       }
     });
 
-    res.json(produto);
-
+    return res.json(produto);
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
-    res.status(500).json(error);
+    return res.status(500).json({
+      error: 'Erro ao atualizar produto.'
+    });
   }
 };
 
-// ✅ DELETAR PRODUTO
 export const deletarProduto = async (req, res) => {
   try {
     const { id } = req.params;
@@ -191,13 +204,14 @@ export const deletarProduto = async (req, res) => {
       }
     });
 
-    res.json({
-      message: "Produto deletado"
+    return res.json({
+      message: 'Produto deletado com sucesso.'
     });
-
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
-    res.status(500).json(error);
+    return res.status(500).json({
+      error: 'Erro ao deletar produto.'
+    });
   }
 };

@@ -8,21 +8,19 @@ datasource db {
 }
 
 model carrinho {
-  id        Int      @id @default(autoincrement())
-  usuarioId Int      @unique(map: "Carrinho_usuarioId_key")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id           Int            @id @default(autoincrement())
+  usuarioId    Int            @unique(map: "Carrinho_usuarioId_key")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
   usuario      usuario        @relation(fields: [usuarioId], references: [id], map: "Carrinho_usuarioId_fkey")
   itemcarrinho itemcarrinho[]
 }
 
 model categoria {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   nome      String
-  updatedAt DateTime @updatedAt
-
-  produto produto[]
+  updatedAt DateTime  @updatedAt
+  produto   produto[]
 }
 
 model endereco {
@@ -34,9 +32,8 @@ model endereco {
   cep       String
   usuarioId Int
   updatedAt DateTime @updatedAt
-
-  usuario usuario  @relation(fields: [usuarioId], references: [id], map: "Endereco_usuarioId_fkey")
-  pedido  pedido[]
+  usuario   usuario  @relation(fields: [usuarioId], references: [id], map: "Endereco_usuarioId_fkey")
+  pedido    pedido[]
 
   @@index([usuarioId], map: "Endereco_usuarioId_fkey")
 }
@@ -47,9 +44,8 @@ model itemcarrinho {
   produtoId  Int
   quantidade Int
   updatedAt  DateTime @updatedAt
-
-  carrinho carrinho @relation(fields: [carrinhoId], references: [id], map: "ItemCarrinho_carrinhoId_fkey")
-  produto  produto  @relation(fields: [produtoId], references: [id], map: "ItemCarrinho_produtoId_fkey")
+  carrinho   carrinho @relation(fields: [carrinhoId], references: [id], map: "ItemCarrinho_carrinhoId_fkey")
+  produto    produto  @relation(fields: [produtoId], references: [id], map: "ItemCarrinho_produtoId_fkey")
 
   @@index([carrinhoId], map: "ItemCarrinho_carrinhoId_fkey")
   @@index([produtoId], map: "ItemCarrinho_produtoId_fkey")
@@ -62,94 +58,91 @@ model itempedido {
   quantidade Int
   preco      Decimal  @db.Decimal(10, 2)
   updatedAt  DateTime @updatedAt
-
-  pedido  pedido  @relation(fields: [pedidoId], references: [id], map: "ItemPedido_pedidoId_fkey")
-  produto produto @relation(fields: [produtoId], references: [id], map: "ItemPedido_produtoId_fkey")
+  pedido     pedido   @relation(fields: [pedidoId], references: [id], map: "ItemPedido_pedidoId_fkey")
+  produto    produto  @relation(fields: [produtoId], references: [id], map: "ItemPedido_produtoId_fkey")
 
   @@index([pedidoId], map: "ItemPedido_pedidoId_fkey")
   @@index([produtoId], map: "ItemPedido_produtoId_fkey")
 }
 
 model pedido {
-  id         Int           @id @default(autoincrement())
-  usuarioId  Int
-  enderecoId Int
-
-  status pedido_status @default(PENDENTE)
-
-  total      Decimal @db.Decimal(10, 2)
-  frete      Decimal? @db.Decimal(10, 2)
-  desconto   Decimal? @db.Decimal(10, 2)
-  totalFinal Decimal? @db.Decimal(10, 2)
-
+  id          Int           @id @default(autoincrement())
+  usuarioId   Int
+  enderecoId  Int
+  status      pedido_status @default(PENDENTE)
+  total       Decimal       @db.Decimal(10, 2)
+  frete       Decimal?      @db.Decimal(10, 2)
+  desconto    Decimal?      @db.Decimal(10, 2)
+  totalFinal  Decimal?      @db.Decimal(10, 2)
   tipoEntrega String?
   cupomCodigo String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  itempedido itempedido[]
-  endereco   endereco @relation(fields: [enderecoId], references: [id], map: "Pedido_enderecoId_fkey")
-  usuario    usuario  @relation(fields: [usuarioId], references: [id], map: "Pedido_usuarioId_fkey")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  itempedido  itempedido[]
+  endereco    endereco      @relation(fields: [enderecoId], references: [id], map: "Pedido_enderecoId_fkey")
+  usuario     usuario       @relation(fields: [usuarioId], references: [id], map: "Pedido_usuarioId_fkey")
 
   @@index([enderecoId], map: "Pedido_enderecoId_fkey")
   @@index([usuarioId], map: "Pedido_usuarioId_fkey")
 }
 
 model produto {
-  id        Int     @id @default(autoincrement())
-  nome      String
-  descricao String
-  preco     Decimal @db.Decimal(10, 2)
-  estoque   Int
-
-  marca   String?
-  tamanho String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  categoriaId Int
-
+  id           Int             @id @default(autoincrement())
+  nome         String
+  descricao    String
+  preco        Decimal         @db.Decimal(10, 2)
+  estoque      Int
+  marca        String?
+  tamanho      String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  categoriaId  Int
   itemcarrinho itemcarrinho[]
   itempedido   itempedido[]
+  categoria    categoria       @relation(fields: [categoriaId], references: [id])
   imagens      produtoImagem[]
-
-  categoria categoria @relation(fields: [categoriaId], references: [id])
 
   @@index([categoriaId], map: "produto_categoriaId_fkey")
 }
 
 model produtoImagem {
-  id        Int    @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   url       String
   produtoId Int
-
-  produto produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  produto   produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
 
   @@index([produtoId])
 }
 
 model usuario {
-  id             Int      @id @default(autoincrement())
+  id             Int          @id @default(autoincrement())
   nome           String
   sobrenome      String
-  email          String   @unique(map: "Usuario_email_key")
+  email          String       @unique(map: "Usuario_email_key")
   senha          String
-  cpf            String   @unique(map: "Usuario_cpf_key")
+  cpf            String       @unique(map: "Usuario_cpf_key")
   telefone       String
   sexo           String
   dataNascimento DateTime
+  ativo          Boolean      @default(true)
+  role           usuario_role @default(USER)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  carrinho       carrinho?
+  endereco       endereco[]
+  pedido         pedido[]
+}
 
-  ativo Boolean      @default(true)
-  role  usuario_role @default(USER)
-
+model cupom {
+  id        Int      @id @default(autoincrement())
+  codigo    String   @unique
+  tipo      String
+  valor     Decimal  @db.Decimal(10, 2)
+  ativo     Boolean  @default(true)
+  usoMaximo Int?
+  usado     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  carrinho carrinho?
-  endereco endereco[]
-  pedido   pedido[]
 }
 
 enum usuario_role {
@@ -163,15 +156,4 @@ enum pedido_status {
   ENVIADO
   ENTREGUE
   CANCELADO
-}
-model cupom {
-  id        Int      @id @default(autoincrement())
-  codigo    String   @unique
-  tipo      String   // PERCENTUAL ou FIXO
-  valor     Decimal  @db.Decimal(10, 2)
-  ativo     Boolean  @default(true)
-  usoMaximo Int?
-  usado     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
