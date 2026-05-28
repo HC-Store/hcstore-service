@@ -1,11 +1,29 @@
 import { prisma } from "../prisma/client.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import {
+  validarEmail,
+  validarTelefone,
+  validarCPF
+} from "../utils/validacoes.js"
 
 // REGISTER
 export const register = async (req, res) => {
   try {
     const { nome, sobrenome, email, senha, cpf, telefone, sexo, dataNascimento } = req.body
+
+    // 🔴 VALIDAÇÕES ADICIONADAS (ANTES DE TUDO)
+    if (!validarEmail(email)) {
+      return res.status(400).json({ erro: "Email inválido." })
+    }
+
+    if (!validarCPF(cpf)) {
+      return res.status(400).json({ erro: "CPF inválido." })
+    }
+
+    if (!validarTelefone(telefone)) {
+      return res.status(400).json({ erro: "Telefone inválido." })
+    }
 
     // verificar email
     const emailExiste = await prisma.usuario.findUnique({ where: { email } })
@@ -79,6 +97,7 @@ export const login = async (req, res) => {
     })
 
   } catch (err) {
+    console.log(err)
     return res.status(500).json({ erro: "Erro interno. Tente novamente mais tarde." })
   }
 }
