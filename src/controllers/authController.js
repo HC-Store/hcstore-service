@@ -10,37 +10,57 @@ import {
 // REGISTER
 export const register = async (req, res) => {
   try {
-    const { nome, sobrenome, email, senha, cpf, telefone, sexo, dataNascimento } = req.body
+    const {
+      nome,
+      sobrenome,
+      email,
+      senha,
+      cpf,
+      telefone,
+      sexo,
+      dataNascimento
+    } = req.body
 
-    // 🔴 VALIDAÇÕES ADICIONADAS (ANTES DE TUDO)
     if (!validarEmail(email)) {
-      return res.status(400).json({ erro: "Email inválido." })
+      return res.status(400).json({
+        erro: "Email inválido."
+      })
     }
 
     if (!validarCPF(cpf)) {
-      return res.status(400).json({ erro: "CPF inválido." })
+      return res.status(400).json({
+        erro: "CPF inválido."
+      })
     }
 
     if (!validarTelefone(telefone)) {
-      return res.status(400).json({ erro: "Telefone inválido." })
+      return res.status(400).json({
+        erro: "Telefone inválido."
+      })
     }
 
-    // verificar email
-    const emailExiste = await prisma.usuario.findUnique({ where: { email } })
+    const emailExiste = await prisma.usuario.findUnique({
+      where: { email }
+    })
+
     if (emailExiste) {
-      return res.status(400).json({ erro: "Este e-mail já está cadastrado." })
+      return res.status(400).json({
+        erro: "Este e-mail já está cadastrado."
+      })
     }
 
-    // verificar cpf
-    const cpfExiste = await prisma.usuario.findUnique({ where: { cpf } })
+    const cpfExiste = await prisma.usuario.findUnique({
+      where: { cpf }
+    })
+
     if (cpfExiste) {
-      return res.status(400).json({ erro: "Este CPF já está cadastrado." })
+      return res.status(400).json({
+        erro: "Este CPF já está cadastrado."
+      })
     }
 
-    // hash senha
     const senhaHash = await bcrypt.hash(senha, 10)
 
-    // criar usuário
     const user = await prisma.usuario.create({
       data: {
         nome,
@@ -54,14 +74,22 @@ export const register = async (req, res) => {
       }
     })
 
-    // criar carrinho automático
-    await prisma.carrinho.create({ data: { usuarioId: user.id } })
+    await prisma.carrinho.create({
+      data: {
+        usuarioId: user.id
+      }
+    })
 
     const { senha: _, ...userSemSenha } = user
+
     return res.status(201).json(userSemSenha)
 
   } catch (err) {
-    return res.status(500).json({ erro: "Erro interno. Tente novamente mais tarde." })
+    console.error(err)
+
+    return res.status(500).json({
+      erro: "Erro interno. Tente novamente mais tarde."
+    })
   }
 }
 
@@ -70,16 +98,32 @@ export const login = async (req, res) => {
   try {
     const { email, senha } = req.body
 
-    const user = await prisma.usuario.findUnique({ where: { email } })
+    const user = await prisma.usuario.findUnique({
+      where: { email }
+    })
 
     if (!user) {
-      return res.status(400).json({ erro: "E-mail não encontrado." })
+      return res.status(400).json({
+        erro: "E-mail não encontrado."
+      })
     }
 
-    const senhaValida = await bcrypt.compare(senha, user.senha)
+    // BLOQUEIA LOGIN DE USUÁRIOS DESATIVADOS
+    if (!user.ativo) {
+      return res.status(403).json({
+        erro: "Usuário desativado."
+      })
+    }
+
+    const senhaValida = await bcrypt.compare(
+      senha,
+      user.senha
+    )
 
     if (!senhaValida) {
-      return res.status(400).json({ erro: "Senha incorreta." })
+      return res.status(400).json({
+        erro: "Senha incorreta."
+      })
     }
 
     const token = jwt.sign(
@@ -97,7 +141,10 @@ export const login = async (req, res) => {
     })
 
   } catch (err) {
-    console.log(err)
-    return res.status(500).json({ erro: "Erro interno. Tente novamente mais tarde." })
+    console.error(err)
+
+    return res.status(500).json({
+      erro: "Erro interno. Tente novamente mais tarde."
+    })
   }
 }
