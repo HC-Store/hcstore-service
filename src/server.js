@@ -15,6 +15,7 @@ import authRoutes from "./routes/authRoutes.js";
 import produtoImagemRoutes from "./routes/produtoImagem.routes.js";
 import cupomRoutes from "./routes/cupom.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
+import pagamentoRoutes from "./routes/pagamento.routes.js";
 
 const app = express()
 
@@ -53,6 +54,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/produto-imagem", produtoImagemRoutes);
 app.use("/api/cupons", cupomRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/pagamentos", pagamentoRoutes);
 app.get('/', (req, res) => {
   res.send('API rodando 🔥')
 })
