@@ -172,14 +172,17 @@ export const deletarUsuario = async (req, res) => {
   try {
     const { id } = req.params
 
-    await prisma.usuario.delete({
+    await prisma.usuario.update({
       where: {
         id: Number(id)
+      },
+      data: {
+        ativo: false
       }
     })
 
     res.json({
-      message: 'Usuário removido com sucesso'
+      message: 'Usuário desativado com sucesso'
     })
 
   } catch (error) {
