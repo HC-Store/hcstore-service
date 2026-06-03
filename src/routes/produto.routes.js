@@ -56,8 +56,26 @@ router.get("/:id", buscarProduto);
 /**
  * @swagger
  * /api/produtos/{id}:
+ *   put:
+ *     summary: Atualiza um produto (PUT)
+ *     tags: [Produtos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Produto atualizado
+ */
+router.put("/:id", atualizarProduto);
+
+/**
+ * @swagger
+ * /api/produtos/{id}:
  *   patch:
- *     summary: Atualiza um produto
+ *     summary: Atualiza parcialmente um produto (PATCH)
  *     tags: [Produtos]
  *     parameters:
  *       - in: path
