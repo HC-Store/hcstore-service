@@ -4,7 +4,8 @@ import {
   buscarUsuarioPorId,
   criarUsuario,
   atualizarUsuario,
-  desativarUsuario
+  desativarUsuario,
+  deletarUsuario
 } from '../controllers/usuario.controller.js'
 
 const router = Router()
@@ -88,5 +89,25 @@ router.put('/usuarios/:id', atualizarUsuario)
  *         description: Usuário desativado
  */
 router.patch('/usuarios/:id/desativar', desativarUsuario)
+
+/**
+ * @swagger
+ * /api/usuarios/{id}:
+ *   delete:
+ *     summary: Remove um usuário
+ *     tags: [Usuários]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Usuário removido com sucesso
+ *       404:
+ *         description: Usuário não encontrado
+ */
+router.delete('/usuarios/:id', deletarUsuario)
 
 export default router

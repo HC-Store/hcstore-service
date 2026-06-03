@@ -166,3 +166,27 @@ export const desativarUsuario = async (req, res) => {
     res.status(500).json({ error: 'Erro ao desativar usuário' })
   }
 }
+
+// DELETAR USUÁRIO
+export const deletarUsuario = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    await prisma.usuario.delete({
+      where: {
+        id: Number(id)
+      }
+    })
+
+    res.json({
+      message: 'Usuário removido com sucesso'
+    })
+
+  } catch (error) {
+    console.error(error)
+
+    res.status(500).json({
+      error: 'Erro ao remover usuário'
+    })
+  }
+}
