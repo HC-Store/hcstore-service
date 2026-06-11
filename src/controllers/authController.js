@@ -7,6 +7,7 @@ import {
   validarTelefone,
   validarCPF
 } from "../utils/validacoes.js"
+import { enviarEmailBoasVindas } from "../services/email.service.js"
 
 const codigosRecuperacao = new Map()
 const TEMPO_EXPIRACAO_CODIGO = 15 * 60 * 1000
@@ -143,10 +144,15 @@ export const register = async (req, res) => {
       }
     })
 
+    try {
+      await enviarEmailBoasVindas(user)
+    } catch (emailError) {
+      console.error("Erro ao enviar e-mail de boas-vindas:", emailError.message)
+    }
+
     const { senha: _, ...userSemSenha } = user
 
     return res.status(201).json(userSemSenha)
-
   } catch (err) {
     console.error(err)
 
@@ -319,17 +325,13 @@ export const login = async (req, res) => {
       })
     }
 
-    // BLOQUEIA LOGIN DE USUÁRIOS DESATIVADOS
     if (!user.ativo) {
       return res.status(403).json({
         erro: "Usuário desativado."
       })
     }
 
-    const senhaValida = await bcrypt.compare(
-      senha,
-      user.senha
-    )
+    const senhaValida = await bcrypt.compare(senha, user.senha)
 
     if (!senhaValida) {
       return res.status(400).json({
@@ -339,7 +341,7 @@ export const login = async (req, res) => {
 
     const token = jwt.sign(
       { id: user.id },
-      "SEGREDO_SUPER_SECRETO",
+      process.env.JWT_SECRET || "SEGREDO_SUPER_SECRETO",
       { expiresIn: "1d" }
     )
 
@@ -350,7 +352,6 @@ export const login = async (req, res) => {
       token,
       role: user.role
     })
-
   } catch (err) {
     console.error(err)
 
