@@ -32,7 +32,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'https://hcstore-service.onrender.com'
+        url: 'https://hcstore-service-8os6.onrender.com/api'
       }
     ]
   },
