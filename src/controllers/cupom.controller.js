@@ -2,27 +2,53 @@ import { prisma } from "../prisma/client.js";
 
 export const criarCupom = async (req, res) => {
   try {
-    const { codigo, tipo, valor, ativo, usoMaximo } = req.body;
+    const { codigo, tipo, valor, ativo = true, usoMaximo } = req.body;
+
+    if (!codigo || !tipo || !valor) {
+      return res.status(400).json({ error: "Código, tipo e valor são obrigatórios." });
+    }
 
     const cupom = await prisma.cupom.create({
       data: {
-        codigo: codigo.toUpperCase(),
+        codigo: codigo.toUpperCase().trim(),
         tipo,
         valor: Number(valor),
-        ativo,
-        usoMaximo
+        ativo: Boolean(ativo),
+        usoMaximo: usoMaximo ? Number(usoMaximo) : null
       }
     });
 
     res.status(201).json(cupom);
   } catch (err) {
-    res.status(500).json({ error: "Erro ao criar cupom" });
+    console.error(err);
+    res.status(500).json({ error: "Erro ao criar cupom." });
   }
 };
 
 export const listarCupons = async (req, res) => {
-  const cupons = await prisma.cupom.findMany();
-  res.json(cupons);
+  try {
+    const cupons = await prisma.cupom.findMany({
+      orderBy: { createdAt: "desc" }
+    });
+
+    res.json(cupons);
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao listar cupons." });
+  }
+};
+
+export const deletarCupom = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await prisma.cupom.delete({
+      where: { id: Number(id) }
+    });
+
+    res.json({ message: "Cupom excluído com sucesso." });
+  } catch (err) {
+    res.status(500).json({ error: "Erro ao excluir cupom." });
+  }
 };
 
 export const validarCupom = async (req, res) => {

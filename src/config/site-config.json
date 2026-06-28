@@ -1,0 +1,17 @@
+{
+  "home": {
+    "videoUrl": "assets/video/banner-home.mp4",
+    "banner1": "assets/img/nikegreen.jpg",
+    "banner2": "assets/img/brinco.jpg",
+    "banner3": "assets/img/baseball.webp",
+    "destaques": [],
+    "lancamentos": []
+  },
+  "colecoes": {
+    "bannerImagem": "assets/img/banner-colecoes.png",
+    "dropTitulo": "DROP 01:",
+    "dropSubtitulo": "OFF-GRID",
+    "dropDescricao": "O OFF-GRID é um mergulho na textura brutalista da cidade.",
+    "dataLancamento": ""
+  }
+}
